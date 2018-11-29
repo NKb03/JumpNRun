@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="wrap_content"
+                                             android:background="@android:color/black">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintHorizontal_bias="0.5"
+                  app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="@string/level"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:textSize="24sp"/>
+
+        <TextView
+                android:id="@+id/levelText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:fontFamily="monospace"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:textSize="24sp"/>
+
+        <TextView
+                android:id="@+id/creditsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="@string/initial_coin_count"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:textSize="24sp"/>
+
+        <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:contentDescription="@string/coin"
+                android:src="@drawable/coin"/>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

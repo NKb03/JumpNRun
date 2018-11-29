@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="light">#d7ccc8</color>
+    <color name="dark">#060642</color>
+    <color name="colorPrimary">#100d33</color>
+    <color name="colorPrimaryDark">#0d1431</color>
+    <color name="accent">#ca7308</color>
+    <color name="design_default_color_primary_dark">#000000</color>
+    <color name="design_default_color_primary">#070518</color>
+    <color name="progress_color">#012773</color>
+    <color name="unachieved_challenge">@color/dark</color>
+    <color name="achieved_challenge">@color/accent</color>
+    <color name="consumed_challenge">#292a42</color>
+</resources>

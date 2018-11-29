@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Jump \'n\' Run</string>
+    <string name="title_activity_main">Jump \'n\' Run</string>
+    <string name="title_home">Challenges</string>
+    <string name="title_dashboard">Play</string>
+    <string name="title_notifications">Games</string>
+    <string name="play">Play</string>
+    <string name="baum_url">D:\Bibliotheken\Anroid\JumpnRun2\app\src\main\res\drawable\Baum.jpg</string>
+    <string name="game_icon_description">Game Icon</string>
+    <string name="coin">Coin</string>
+    <string name="level">Level:</string>
+    <string name="initial_coin_count">0</string>
+</resources>
