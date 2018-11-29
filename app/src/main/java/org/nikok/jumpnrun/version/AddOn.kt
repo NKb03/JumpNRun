@@ -1,7 +1,5 @@
 package org.nikok.jumpnrun.version
 
-import android.os.Build
-import android.support.annotation.RequiresApi
 import java.io.InputStream
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Unmarshaller
@@ -29,7 +27,6 @@ data class AddOn(
             return unmarshaller.unmarshal(xmlInput) as AddOn
         }
 
-        @RequiresApi(Build.VERSION_CODES.O)
         @JvmStatic
         fun main(args: Array<String>) {
             val url = AddOn::class.java.getResource("main.xml")!!
