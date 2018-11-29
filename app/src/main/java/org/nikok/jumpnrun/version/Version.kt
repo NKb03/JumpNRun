@@ -1,12 +1,18 @@
 package org.nikok.jumpnrun.version
 
 import org.simpleframework.xml.Attribute
-import org.simpleframework.xml.Element
+import org.simpleframework.xml.ElementList
 
-data class Version(
-    @Attribute val versionNumber: Int,
-    @Element(name = "patch") val patchClassNames: List<String>
-) {
+class Version {
+    @field: Attribute
+    var versionNumber: Int = -1
+        private set
+        get() = field.takeIf { it != -1 } ?: error("Version number not initialized")
+
+    @field: ElementList(entry = "patch", inline = true)
+    lateinit var patchClassNames: List<String>
+        private set
+
     fun patches(classLoader: ClassLoader): List<Patch> = patchClassNames.map { clsName ->
         val cls = try {
             classLoader.loadClass(clsName).kotlin
@@ -17,5 +23,7 @@ data class Version(
         obj as? Patch ?: throw RuntimeException("Object instance of Patch class is not a patch")
     }
 
-    private constructor() : this(-1, emptyList())
+    override fun toString(): String {
+        return "Version(versionNumber=$versionNumber, patchClassNames=$patchClassNames)"
+    }
 }

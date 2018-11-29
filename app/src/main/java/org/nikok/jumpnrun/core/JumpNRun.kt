@@ -11,7 +11,7 @@ import java.net.URL
 import kotlin.reflect.KClass
 
 class JumpNRun : Externalizable, Parcelable {
-    private val addOnUrls = mutableSetOf(MAIN_ADDON_URL)
+    private val addOns by lazy { mutableMapOf(MAIN_ADDON_URL to 0) }
 
     private val _challenges: MutableMap<Class<out Game<*>>, MutableList<Challenge<*>>> = HashMap()
 
@@ -65,7 +65,7 @@ class JumpNRun : Externalizable, Parcelable {
             writeObject(_games)
             writeInt(credits.count)
             writeObject(currentGame)
-            writeObject(addOnUrls)
+            writeObject(addOns)
         }
     }
 
@@ -82,33 +82,30 @@ class JumpNRun : Externalizable, Parcelable {
             val count = readInt()
             credits = Credits.Modifiable(count)
             currentGame = readObject() as GameFactory
-            addOnUrls.addAll(readObject() as Set<URL>)
+            addOns.putAll(readObject() as Map<URL, Int>)
         }
     }
 
     private var version: Int = 0
 
-    fun update(toVersion: Int): Boolean {
-        if (version == toVersion) return false
-        for (url in addOnUrls) {
+    fun update() {
+        for ((url, myVersion) in addOns) {
             val addOn = AddOn.parse(url)
             val maxVersion = addOn.maxVersion
+            if (myVersion >= maxVersion) break
             for (version in addOn.versions) {
                 val versionNumber = version.versionNumber
-                if (versionNumber in (maxVersion + 1)..toVersion) {
+                if (versionNumber in (myVersion + 1)..maxVersion) {
                     for (patch in version.patches(JumpNRun::class.java.classLoader!!))
                         patch.apply(this)
                 }
             }
+            addOns[url] = maxVersion
         }
-        version = toVersion
-        return true
     }
 
     companion object CREATOR : Parcelable.Creator<JumpNRun> {
         val INSTANCE = JumpNRun()
-
-        const val MAX_VERSION = 2
 
         private val MAIN_ADDON_URL = JumpNRun::class.java.getResource("main.xml") ?: error("Main addon not found")
 

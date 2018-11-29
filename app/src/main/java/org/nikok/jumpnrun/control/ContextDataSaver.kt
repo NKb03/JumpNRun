@@ -8,11 +8,11 @@ import java.io.ObjectOutputStream
 class ContextDataSaver(private val context: Context) : DataSaver {
     override fun update(jumpNRun: JumpNRun) {
         if (isFirstUse() || NEVER_SAVE) {
-            jumpNRun.update(JumpNRun.MAX_VERSION)
+            jumpNRun.update()
             saveData(jumpNRun)
         } else {
             loadData(jumpNRun)
-            jumpNRun.update(JumpNRun.MAX_VERSION)
+            jumpNRun.update()
         }
     }
 
@@ -33,6 +33,6 @@ class ContextDataSaver(private val context: Context) : DataSaver {
     companion object {
         private const val DATA_FILE = "data.ser"
 
-        private const val NEVER_SAVE = true
+        private const val NEVER_SAVE = false
     }
 }

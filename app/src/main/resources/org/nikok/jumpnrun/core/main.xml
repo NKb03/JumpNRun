@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<addon maxVersion="2" name="Main">
-    <version versionNumber="1">
-        <patch>org.nikok.jumpnrun.version.Version1</patch>
-    </version>
-    <version versionNumber="2">
-        <patch>org.nikok.jumpnrun.version.Version2</patch>
-    </version>
-</addon>
