@@ -1,37 +1,30 @@
 package org.nikok.jumpnrun.version
 
-import java.io.InputStream
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.Unmarshaller
-import javax.xml.bind.annotation.XmlAttribute
-import javax.xml.bind.annotation.XmlElement
-import javax.xml.bind.annotation.XmlRootElement
+import org.simpleframework.xml.Attribute
+import org.simpleframework.xml.Element
+import org.simpleframework.xml.Serializer
+import org.simpleframework.xml.core.Persister
+import java.net.URL
 
-@XmlRootElement(name = "addon")
+@Element(name = "addon")
 data class AddOn(
-    @XmlAttribute val name: String,
-    @XmlAttribute val maxVersion: Int,
-    @XmlElement(name = "version") val versions: List<Version>
+    @Attribute(name = "name") val name: String,
+    @Attribute(name = "maxVersion") val maxVersion: Int,
+    @Attribute(name = "version") val versions: List<Version>
 ) {
     private constructor() : this("", -1, emptyList())
 
     companion object {
-        private val unmarshaller = createUnmarshaller()
+        private val serializer: Serializer = Persister()
 
-        private fun createUnmarshaller(): Unmarshaller {
-            val context = JAXBContext.newInstance(AddOn::class.java)
-            return context.createUnmarshaller()
-        }
-
-        fun parse(xmlInput: InputStream): AddOn {
-            return unmarshaller.unmarshal(xmlInput) as AddOn
+        fun parse(url: URL): AddOn {
+            return serializer.read(AddOn::class.java, url.toExternalForm())
         }
 
         @JvmStatic
         fun main(args: Array<String>) {
             val url = AddOn::class.java.getResource("main.xml")!!
-            val input = url.openStream()
-            val addOn = AddOn.parse(input)
+            val addOn = AddOn.parse(url)
             println(addOn)
         }
     }

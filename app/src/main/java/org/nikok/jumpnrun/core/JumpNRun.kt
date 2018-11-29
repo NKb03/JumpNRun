@@ -3,15 +3,16 @@ package org.nikok.jumpnrun.core
 import android.os.Parcel
 import android.os.Parcelable
 import org.nikok.jumpnrun.games.EscapeTheSquares
-import org.nikok.jumpnrun.version.Version
-import org.nikok.jumpnrun.version.Version1
-import org.nikok.jumpnrun.version.Version2
+import org.nikok.jumpnrun.version.AddOn
 import java.io.Externalizable
 import java.io.ObjectInput
 import java.io.ObjectOutput
+import java.net.URL
 import kotlin.reflect.KClass
 
 class JumpNRun : Externalizable, Parcelable {
+    private val addOnUrls = mutableSetOf(MAIN_ADDON_URL)
+
     private val _challenges: MutableMap<Class<out Game<*>>, MutableList<Challenge<*>>> = HashMap()
 
     private val _games: MutableList<GameFactory> = ArrayList()
@@ -64,6 +65,7 @@ class JumpNRun : Externalizable, Parcelable {
             writeObject(_games)
             writeInt(credits.count)
             writeObject(currentGame)
+            writeObject(addOnUrls)
         }
     }
 
@@ -80,6 +82,7 @@ class JumpNRun : Externalizable, Parcelable {
             val count = readInt()
             credits = Credits.Modifiable(count)
             currentGame = readObject() as GameFactory
+            addOnUrls.addAll(readObject() as Set<URL>)
         }
     }
 
@@ -87,11 +90,15 @@ class JumpNRun : Externalizable, Parcelable {
 
     fun update(toVersion: Int): Boolean {
         if (version == toVersion) return false
-        for (v in VERSIONS) {
-            val versionNumber = v.versionNumber
-            if (versionNumber in (version + 1)..toVersion) {
-                for (patch in v.patches(JumpNRun::class.java.classLoader!!))
-                    patch.apply(this)
+        for (url in addOnUrls) {
+            val addOn = AddOn.parse(url)
+            val maxVersion = addOn.maxVersion
+            for (version in addOn.versions) {
+                val versionNumber = version.versionNumber
+                if (versionNumber in (maxVersion + 1)..toVersion) {
+                    for (patch in version.patches(JumpNRun::class.java.classLoader!!))
+                        patch.apply(this)
+                }
             }
         }
         version = toVersion
@@ -103,10 +110,7 @@ class JumpNRun : Externalizable, Parcelable {
 
         const val MAX_VERSION = 2
 
-        val VERSIONS: Set<Version> = mutableSetOf<Version>().apply {
-            add(Version(1, Version1))
-            add(Version(2, Version2))
-        }
+        private val MAIN_ADDON_URL = JumpNRun::class.java.getResource("main.xml") ?: error("Main addon not found")
 
         override fun createFromParcel(parcel: Parcel): JumpNRun {
             return INSTANCE
