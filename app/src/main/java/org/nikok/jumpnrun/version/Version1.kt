@@ -9,7 +9,7 @@ import org.nikok.jumpnrun.games.DummyGame
 import org.nikok.jumpnrun.games.EscapeTheSquares
 import org.nikok.jumpnrun.games.JetpackJoyride
 
-object Version1 : Patch() {
+object Version1 : Patch {
     override fun apply(jumpNRun: JumpNRun) {
         with(jumpNRun) {
             registerChallenges()

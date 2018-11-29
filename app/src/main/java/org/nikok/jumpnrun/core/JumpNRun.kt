@@ -87,9 +87,11 @@ class JumpNRun : Externalizable, Parcelable {
 
     fun update(toVersion: Int): Boolean {
         if (version == toVersion) return false
-        for ((patch, versionNumber) in VERSIONS) {
+        for (v in VERSIONS) {
+            val versionNumber = v.versionNumber
             if (versionNumber in (version + 1)..toVersion) {
-                patch.apply(this)
+                for (patch in v.patches(JumpNRun::class.java.classLoader!!))
+                    patch.apply(this)
             }
         }
         version = toVersion
@@ -102,8 +104,8 @@ class JumpNRun : Externalizable, Parcelable {
         const val MAX_VERSION = 2
 
         val VERSIONS: Set<Version> = mutableSetOf<Version>().apply {
-            add(Version(Version1, 1))
-            add(Version(Version2, 2))
+            add(Version(1, Version1))
+            add(Version(2, Version2))
         }
 
         override fun createFromParcel(parcel: Parcel): JumpNRun {
