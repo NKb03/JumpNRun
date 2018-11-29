@@ -5,7 +5,6 @@ import org.nikok.jumpnrun.challenges.EscapeNSquares
 import org.nikok.jumpnrun.challenges.KillNObstacles
 import org.nikok.jumpnrun.challenges.TenPointsChallenge
 import org.nikok.jumpnrun.core.JumpNRun
-import org.nikok.jumpnrun.core.Patch
 import org.nikok.jumpnrun.games.DummyGame
 import org.nikok.jumpnrun.games.EscapeTheSquares
 import org.nikok.jumpnrun.games.JetpackJoyride
