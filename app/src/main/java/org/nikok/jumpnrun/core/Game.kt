@@ -201,8 +201,11 @@ abstract class Game<out R : GameResult> : Serializable {
                 val to = Point(e2.x, e2.y)
                 val distanceX = e2.x - e1.x
                 val distanceY = e2.y - e1.y
+                val absDistX = distanceX.absoluteValue
+                val absDistY = distanceY.absoluteValue
                 if (
-                    distanceX.absoluteValue > SWIPE_DISTANCE_THRESHOLD &&
+                    absDistX > absDistY &&
+                    absDistX > SWIPE_DISTANCE_THRESHOLD &&
                     velocityX.absoluteValue > SWIPE_VELOCITY_THRESHOLD
                 ) {
                     if (distanceX > 0) {
@@ -211,13 +214,13 @@ abstract class Game<out R : GameResult> : Serializable {
                         onSwipeLeft(from, to, velocityX, velocityY, currentElement)
                     }
                 } else if (
-                    distanceY.absoluteValue > SWIPE_DISTANCE_THRESHOLD &&
+                    absDistY > SWIPE_DISTANCE_THRESHOLD &&
                     velocityY.absoluteValue > SWIPE_VELOCITY_THRESHOLD
                 ) {
                     if (distanceY > 0) {
-                        onSwipeUp(from, to, velocityX, velocityY, currentElement)
-                    } else {
                         onSwipeDown(from, to, velocityX, velocityY, currentElement)
+                    } else {
+                        onSwipeUp(from, to, velocityX, velocityY, currentElement)
                     }
                 }
                 return true
