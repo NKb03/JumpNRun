@@ -103,13 +103,11 @@ class EscapeTheSquares : Game<EscapeTheSquares.Result>(), EventHandler {
     }
 
     private fun collidesWithBall(coin: GameElement): Boolean {
-        synchronized(System.out) {
-            val r1 = coin.width / 2
-            val x1 = coin.x + r1
-            val y1 = coin.y + r1
-            val (x2, y2) = ball.center
-            return overlaps(x1, y1, x2, y2, r1, ball.radius)
-        }
+        val r1 = coin.width / 2
+        val x1 = coin.x + r1
+        val y1 = coin.y + r1
+        val (x2, y2) = ball.center
+        return overlaps(x1, y1, x2, y2, r1, ball.radius)
     }
 
     private fun lost() {
