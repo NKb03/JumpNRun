@@ -34,5 +34,6 @@ class ContextDataSaver(private val context: Context) : DataSaver {
         private const val DATA_FILE = "data.ser"
 
         private const val NEVER_SAVE = false
+
     }
 }
