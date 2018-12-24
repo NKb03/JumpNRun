@@ -229,12 +229,10 @@ class JetpackJoyride : Game<JetpackJoyride.Result>(), EventHandler {
         ball.cy = totalHeight / 2
     }
 
-    private val colorGenerator = ColorGenerator(COLORS)
+    private val colorGenerator = ColorGenerator()
 
     companion object {
         private const val INITIAL_OBSTACLE_GENERATION_SPEED = 700
-
-        private const val COLORS = 12
 
         private const val COIN_PROBABILITY = 5
 

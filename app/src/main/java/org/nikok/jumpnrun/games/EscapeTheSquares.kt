@@ -249,12 +249,10 @@ class EscapeTheSquares : Game<EscapeTheSquares.Result>(), EventHandler {
         addElement(ball)
     }
 
-    private val colorGenerator = ColorGenerator(COLORS)
+    private val colorGenerator = ColorGenerator()
 
     companion object {
         private const val INITIAL_OBSTACLE_GENERATION_SPEED = 700
-
-        private const val COLORS = 12
 
         val FACTORY = GameFactory {
             gameName = "Escape The Squares"

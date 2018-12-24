@@ -179,7 +179,7 @@ class BallJump : Game<BallJump.Result>(), EventHandler {
         addElement(ball)
     }
 
-    private val colorGenerator = ColorGenerator(10)
+    private val colorGenerator = ColorGenerator()
 
     data class Result(val points: Int) : GameResult(BallJump::class, points)
 
