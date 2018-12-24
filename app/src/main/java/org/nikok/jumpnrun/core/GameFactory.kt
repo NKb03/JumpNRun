@@ -46,6 +46,8 @@ class GameFactory private constructor(
         internal fun build() = GameFactory(gameName, iconRes, price, gameCls, backgroundRes, screenOrientation)
     }
 
+    override fun toString(): String = "Game $gameName"
+
     companion object {
         inline operator fun invoke(block: Builder.() -> Unit): GameFactory = Builder().apply(block).build()
     }
