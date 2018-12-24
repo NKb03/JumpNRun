@@ -5,13 +5,14 @@ import android.os.Parcelable
 import org.nikok.jumpnrun.games.EscapeTheSquares
 import org.nikok.jumpnrun.version.AddOn
 import java.io.Externalizable
+import java.io.IOException
 import java.io.ObjectInput
 import java.io.ObjectOutput
-import java.net.URL
+import kotlin.math.max
 import kotlin.reflect.KClass
 
 class JumpNRun : Externalizable, Parcelable {
-    private val addOns by lazy { mutableMapOf(MAIN_ADDON_URL to 0) }
+    private val addOns by lazy { mutableMapOf(MAIN_ADDON to 0) }
 
     private val _challenges: MutableMap<Class<out Game<*>>, MutableList<Challenge<*>>> = HashMap()
 
@@ -58,56 +59,62 @@ class JumpNRun : Externalizable, Parcelable {
         credits.earn(result.credits)
     }
 
+    fun update() {
+        for ((url, myVersion) in addOns) {
+            val addOn = AddOn.parse(url)
+            var maxVersion = 0
+            for (version in addOn.versions) {
+                val versionNumber = version.versionNumber
+                if (versionNumber > myVersion) {
+                    for (patch in version.patches(JumpNRun::class.java.classLoader!!))
+                        patch.apply(this)
+                    if (versionNumber > maxVersion) maxVersion = versionNumber
+                }
+            }
+            addOns[url] = max(maxVersion, myVersion)
+        }
+    }
+
     override fun writeExternal(output: ObjectOutput) {
-        with(output) {
-            writeInt(version)
-            writeObject(_challenges)
-            writeObject(_games)
-            writeInt(credits.count)
-            writeObject(currentGame)
-            writeObject(addOns)
+        try {
+            with(output) {
+                writeObject(_challenges)
+                writeObject(_games)
+                writeInt(credits.count)
+                writeObject(currentGame)
+                writeObject(addOns)
+            }
+        } catch (exc: IOException) {
+            exc.printStackTrace()
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun readExternal(input: ObjectInput) {
-        with(input) {
-            version = readInt()
-            val challenges = readObject() as HashMap<Class<Game<*>>, MutableList<Challenge<*>>>
-            _challenges.clear()
-            _challenges.putAll(challenges)
-            val games = readObject() as ArrayList<GameFactory>
-            _games.clear()
-            _games.addAll(games)
-            val count = readInt()
-            credits = Credits.Modifiable(count)
-            currentGame = readObject() as GameFactory
-            addOns.putAll(readObject() as Map<URL, Int>)
-        }
-    }
-
-    private var version: Int = 0
-
-    fun update() {
-        for ((url, myVersion) in addOns) {
-            val addOn = AddOn.parse(url)
-            val maxVersion = addOn.maxVersion
-            if (myVersion >= maxVersion) break
-            for (version in addOn.versions) {
-                val versionNumber = version.versionNumber
-                if (versionNumber in (myVersion + 1)..maxVersion) {
-                    for (patch in version.patches(JumpNRun::class.java.classLoader!!))
-                        patch.apply(this)
-                }
+        try {
+            with(input) {
+                val challenges = readObject() as HashMap<Class<Game<*>>, MutableList<Challenge<*>>>
+                _challenges.clear()
+                _challenges.putAll(challenges)
+                val games = readObject() as ArrayList<GameFactory>
+                _games.clear()
+                _games.addAll(games)
+                val count = readInt()
+                credits = Credits.Modifiable(count)
+                currentGame = readObject() as GameFactory
+                addOns.putAll(readObject() as Map<String, Int>)
             }
-            addOns[url] = maxVersion
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
+
+    override fun writeToParcel(dest: Parcel?, flags: Int) {}
 
     companion object CREATOR : Parcelable.Creator<JumpNRun> {
         val INSTANCE = JumpNRun()
 
-        private val MAIN_ADDON_URL = JumpNRun::class.java.getResource("main.xml") ?: error("Main addon not found")
+        private const val MAIN_ADDON = "main.xml"
 
         override fun createFromParcel(parcel: Parcel): JumpNRun {
             return INSTANCE
@@ -116,10 +123,6 @@ class JumpNRun : Externalizable, Parcelable {
         override fun newArray(size: Int): Array<JumpNRun?> {
             return arrayOfNulls(size)
         }
-    }
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(version)
     }
 
     override fun describeContents(): Int {
